@@ -12,102 +12,196 @@
   }
   h1 {
     margin-bottom: 10px;
-  }
-  .info {
-    margin: 10px 0;
-    font-size: 16px;
-  }
-  #excuse {
-    margin: 20px 0;
-    font-size: 20px;
-    min-height: 2em;
-  }
-  button {
-    padding: 15px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    background: #ff8c00;
-    color: white;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #ff7000;
-  }
-</style>
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="ja">
+  <head>
+  <meta charset="UTF-8">
+  <title>本日の自動ドア</title>
 
-<h1>明日から本気出す</h1>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: #000;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-<div class="info">📅 今日の日付：<span id="today"></span></div>
-<div class="info">🔥 本気予定日：未定</div>
-<div class="info">🔢 押した回数：<span id="count">0</span></div>
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+    }
 
-<div id="excuse">ボタンを押してください</div>
+    .date {
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #aaa;
+    }
 
-<button id="mainButton">明日から本気出す</button>
+    .door-frame {
+      width: 240px;
+      height: 320px;
+      margin: 20px auto 0;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.6);
+    }
 
-<script>
-const excuses = [
-  "今日は疲れてる","月曜から","雨だから","今日は様子見","連休明けから",
-  "キリがいい日から","来月から","来年から（本気）","今日は情報収集の日","やる気が整っていない",
-  "まだ本番じゃない","今日は助走","気圧のせい","体が本気を拒否している","やろうと思えばできる",
-  "今やると逆に効率が悪い","今日は準備期間","やる気はある（行動は別）","今日は温存","今日は英気を養う日",
+    .door {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      transition: transform 0.9s ease-in-out;
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.35),
+        rgba(0,0,0,0.25)
+      );
+    }
 
-  "明日はやる気出る予定","今日は心の整理中","やるには覚悟が足りない","今日は無理をしない方針","今日は安全運転",
-  "今日は慎重派","今日は省エネモード","今日は低燃費","本気はまだ奥にある","まだ出す段階じゃない",
-  "今日は見送る判断","今日は戦略的撤退","今日は判断保留","今日は休養優先","今日は自分に優しく",
-  "今日は様子を見る日","今日は流れが違う","今日はタイミングじゃない","今日は縁がない","今日は気分が違う",
+    .left {
+      left: 0;
+      border-right: 1px solid rgba(0,0,0,0.4);
+    }
 
-  "今日は集中力が行方不明","今日は脳が起動していない","今日は心が追いついていない","今日はやる気が外出中","今日は気力が欠席",
-  "今日はモチベーション不在","今日は気持ちが曇り","今日は判断力が低下中","今日は本気が迷子","今日は自制心が休暇中",
-  "今日はエネルギー節約日","今日は気合いが未配達","今日は本気が渋滞中","今日は精神的メンテナンス","今日はやる気充電中",
-  "今日は気持ちが追いつかない","今日は心身の調整日","今日は静観する日","今日は流れを読む日","今日は待ちの姿勢",
+    .right {
+      right: 0;
+      border-left: 1px solid rgba(0,0,0,0.4);
+    }
 
-  "今日は準備だけで終わる予定","今日は下見で終了","今日は計画倒れの日","今日は理論上やる日","今日は概念だけ進めた",
-  "今日は脳内で完了","今日は想像で達成","今日は気持ちだけ前進","今日はイメトレ完璧","今日は気分だけ達成",
+    .open .left {
+      transform: translateX(-100%);
+    }
 
-  "今日は哲学的休養","今日は精神修行中","今日は未来の自分に託す","今日は次の自分に任せる","今日は後回し力を発揮",
-  "今日は延期力が高い","今日は先延ばしが最適解","今日は見なかったことにする","今日はまた今度","今日は何もしない勇気",
+    .open .right {
+      transform: translateX(100%);
+    }
 
-  "今日は世界が許してくれない","今日は社会が悪い","今日は自分のせいじゃない","今日は環境要因","今日は運が悪い",
-  "今日は星の配置が微妙","今日は占いが最下位","今日は厄日","今日はそういう日","今日は流れが重い",
+    .message {
+      margin-top: 25px;
+      font-size: 16px;
+      min-height: 26px;
+      color: #ddd;
+    }
 
-  "今日は精神が低空飛行","今日は本気が起きてこない","今日は心が布団から出ない","今日は気力が在庫切れ","今日は本気が欠品中",
-  "今日はやる気が配送遅延","今日は内部調整中","今日はシステムメンテ中","今日は再起動が必要","今日はアップデート待ち",
+    /* ボタンをさらに少し上へ */
+    .button-area {
+      margin-top: 20px; /* ← ここを調整 */
+    }
 
-  "今日は脳の使用率が高い","今日は感情が多忙","今日は考えすぎた","今日は判断が重い","今日は集中が分散",
-  "今日は決断を延期","今日は勢いが足りない","今日は覚悟が未成熟","今日は踏み切れない","今日は気持ちが揺れている",
+    button {
+      font-size: 22px;
+      padding: 12px 36px 16px;
+      border-radius: 40px;
+      border: none;
+      background: #eee;
+      color: #000;
+      cursor: pointer;
+      line-height: 1;
+    }
 
-  "今日は自分会議が長引いた","今日は内なる声が反対","今日は心が慎重","今日は精神が防御態勢","今日は様子見が最善",
-  "今日は動かない選択","今日は待つ判断","今日は静かな一日","今日は保留が正解","今日は延期が賢明"
-];
+    button:hover {
+      opacity: 0.85;
+    }
+  </style>
+  </head>
 
-let count = 0;
-const maxCount = 100;
+  <body>
+  <div class="container">
 
-document.getElementById("today").textContent =
-  new Date().toLocaleDateString("ja-JP");
+    <div class="date" id="date"></div>
 
-const button = document.getElementById("mainButton");
-const excuseDiv = document.getElementById("excuse");
-const countSpan = document.getElementById("count");
+    <div class="door-frame" id="frame">
+      <div class="door left"></div>
+      <div class="door right"></div>
+    </div>
 
-button.addEventListener("click", () => {
-  if (count < maxCount) {
-    count++;
-    countSpan.textContent = count;
-    excuseDiv.textContent =
-      excuses[Math.floor(Math.random() * excuses.length)];
-  } else {
-    excuseDiv.textContent =
-      "🎉 100回達成！\nあなたは『明日から本気出す』の達人です。";
-    button.textContent = "最初から";
-    button.onclick = () => location.reload();
-  }
-});
-</script>
+    <div class="message" id="message"></div>
 
-</body>
-</html>
+    <div class="button-area">
+      <button onclick="pressDoor()">本日の自動ドア</button>
+    </div>
+
+  </div>
+
+  <script>
+    const openWords = [
+      "今日も通過できた",
+      "拒絶ではない",
+      "あなたは認識されている",
+      "今日は問題ない",
+      "通過が成立した",
+      "存在は検知された",
+      "世界は通した",
+      "今日は対象内だった",
+      "一応、開いた",
+      "何事もなく通過",
+      "遮られなかった",
+      "今日は拒まれなかった",
+      "センサーは迷わなかった",
+      "通行は許可された",
+      "ここにいてもいい",
+      "反応はあった",
+      "今日のあなたは有効",
+      "静かに開いた",
+      "問題なく処理された",
+      "今日は通れた"
+    ];
+
+    const closedWords = [
+      "反応がない",
+      "拒絶ではないが、開かない",
+      "センサーは沈黙した",
+      "今日は違う",
+      "判断が保留された",
+      "存在は未確認",
+      "誰もいないことになっている",
+      "通過は成立しなかった",
+      "ドアは考え込んでいる",
+      "今日は対象外かもしれない"
+    ];
+
+    function pressDoor() {
+      const frame = document.getElementById("frame");
+      const message = document.getElementById("message");
+
+      frame.classList.remove("open");
+      message.textContent = "";
+
+      const fail = Math.random() < 0.1;
+
+      if (fail) {
+        message.textContent =
+          closedWords[Math.floor(Math.random() * closedWords.length)];
+        return;
+      }
+
+      frame.classList.add("open");
+      message.textContent =
+        openWords[Math.floor(Math.random() * openWords.length)];
+
+      setTimeout(() => {
+        frame.classList.remove("open");
+      }, 1300);
+    }
+
+    // 日付表示
+    const today = new Date();
+    document.getElementById("date").textContent =
+      today.getFullYear() + "年" +
+      (today.getMonth() + 1) + "月" +
+      today.getDate() + "日の自動ドア";
+
+    // 日替わり色
+    const hue = (today.getDate() * 13) % 360;
+    document.querySelector(".door-frame").style.background =
+      `hsl(${hue}, 18%, 45%)`;
+  </script>
+  </body>
+  </html>
