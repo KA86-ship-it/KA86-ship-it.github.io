@@ -2,6 +2,42 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>本日の自動ドア</title>
+  <style>
+    body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:#000;color:#eee;display:flex;justify-content:center;align-items:center;height:100vh}
+    .container{max-width:360px;width:100%;text-align:center}
+    .date{margin-bottom:20px;font-size:14px;color:#aaa}
+    .door-frame{width:240px;height:320px;margin:20px auto 0;border-radius:10px;position:relative;overflow:hidden;box-shadow:inset 0 0 12px rgba(0,0,0,0.6)}
+    .door{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform .9s ease-in-out;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(0,0,0,.25));border-radius:8px}
+    .open .door{transform:translateX(100%)}
+    .message{margin-top:25px;font-size:16px;min-height:26px;color:#ddd}
+    .button-area{margin-top:20px}
+    button{font-size:22px;padding:12px 36px 16px;border-radius:40px;border:none;background:#eee;color:#000;cursor:pointer;line-height:1}
+    button:hover{opacity:.85}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="date" id="date"></div>
+    <div class="door-frame" id="frame">
+      <div class="door" id="door"></div>
+    </div>
+    <div class="message" id="message"></div>
+    <div class="button-area"><button onclick="pressDoor()">本日の自動ドア</button></div>
+  </div>
+  <script>
+    const openWords=["今日も通過できた","拒絶ではない","あなたは認識されている","今日は問題ない","通過が成立した","存在は検知された","世界は通した","今日は対象内だった","一応、開いた","何事もなく通過","遮られなかった","今日は拒まれなかった","センサーは迷わなかった","通行は許可された","ここにいてもいい","反応はあった","今日のあなたは有効","静かに開いた","問題なく処理された","今日は通れた"];
+    const closedWords=["反応がない","拒絶ではないが、開かない","センサーは沈黙した","今日は違う","判断が保留された","存在は未確認","誰もいないことになっている","通過は成立しなかった","ドアは考え込んでいる","今日は対象外かもしれない"];
+    function pressDoor(){const frame=document.getElementById('frame');const message=document.getElementById('message');frame.classList.remove('open');message.textContent='';if(Math.random()<0.1){message.textContent=closedWords[Math.floor(Math.random()*closedWords.length)];return;}frame.classList.add('open');message.textContent=openWords[Math.floor(Math.random()*openWords.length)];setTimeout(()=>frame.classList.remove('open'),1300)}
+    const today=new Date();document.getElementById('date').textContent=today.getFullYear()+'年'+(today.getMonth()+1)+'月'+today.getDate()+'日の自動ドア';const hue=(today.getDate()*13)%360;document.querySelector('.door-frame').style.background=`hsl(${hue},18%,45%)`;
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
   <title>本日の自動ドア</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
